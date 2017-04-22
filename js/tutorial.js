@@ -65,6 +65,8 @@ var loader = new THREE.TextureLoader();
 var colorMap = loader.load("img/earth_atmos_2048.jpg");
 var specMap = loader.load("img/earth_specular_2048.jpg");
 var normalMap = loader.load("img/earth_normal_2048.jpg");
+var bumpMap = loader.load("img/earthbump1k.jpg");
+
 
 var sphere_material = new THREE.MeshPhongMaterial({
   color: 0xaaaaaa,
@@ -72,7 +74,9 @@ var sphere_material = new THREE.MeshPhongMaterial({
   shininess: 15,
   map: colorMap,
   specularMap: specMap,
-  normalMap: normalMap
+  displacementMap: bumpMap,
+  displacementScale: 0.1,
+  normalMap: normalMap,
 });
 
 
