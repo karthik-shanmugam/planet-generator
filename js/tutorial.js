@@ -224,7 +224,7 @@ void main() {
   // disp = l0 + l1 + l2;
   disp = 0.0;
   vec3 newPosition = position + normal * disp;
-  pos = position / length(normal - vec3(0.0, 0.0, 0.0));
+  pos = position / length(position - vec3(0.0, 0.0, 0.0));
   gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition,1.0);
 }
 `
@@ -412,6 +412,7 @@ void main(void)
 
 
 var frag_shader2 = `
+uniform int seed;
 varying vec2 vUv;
 varying float disp;
 varying vec3 pos;
@@ -637,19 +638,66 @@ float pnoise(vec3 P, vec3 rep)
 //   return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
 // }
 
+bool is_land(vec3 x){
+  // move to a new sections of perlin noise space
+  x = x + vec3(10.0, 0.0, 0.0);
+
+  float l0 = 0.66 * cnoise( 1.0 * x);
+  float l1 = 0.22 * cnoise( 2.0 * x);
+  float l2 = 1.0 * 0.075 * cnoise( 4.0 * x);
+  float l3 = 1.0 * 0.055 * cnoise( 8.0 * x);
+  float disp2 = l0 + l1 + l2 + l3;
+  return disp2 > 0.10;  
+}
+
+vec3 ocean_noise(vec3 x){
+  // move to a new sections of perlin noise space
+  x = x + vec3(20.0, 0.0, 0.0);
+
+  float l0 = 0.66 * cnoise( 12.8 * x);
+  float l1 = 0.22 * cnoise( 25.6 * x);
+  float l2 = 1.0 * 0.075 * cnoise( 51.2 * x);
+  float l3 = 1.0 * 0.055 * cnoise( 102.4 * x);
+  float disp2 = l0 + l1 + l2 + l3;
+  return (1.0 - 0.1 * disp2) * vec3(0.0, 0.3, 0.8);
+}
+
+vec3 land_noise(vec3 x){
+  // move to a new sections of perlin noise space
+  x = x + vec3(100.0, 0.0, 0.0);
+
+  float l0 = 0.66 * cnoise( 5.0 * x);
+  float l1 = 0.22 * cnoise( 10.0 * x);
+  float l2 = 1.0 * 0.075 * cnoise( 20.0 * x);
+  float l3 = 1.0 * 0.055 * cnoise( 40.0 * x);
+  float disp2 = l0 + l1 + l2 + l3;
+  return (1.0 - 0.8 * disp2) * vec3(0.2, 0.7, 0.2);
+}
+
+// vec3 ss_land_noise(vec x, int n) {
+//   vec3 tot;
+//   for (int i = 0; i < n; i++)
+// }
+
 void main(void)
 {
-  float l0 = 0.7 * cnoise( 0.2 * pos);
-  float l1 = 0.0;// = 0.4 * cnoise( 20.0 * pos);
-  float l2 = 0.0;// 0.04 * cnoise( 10000.0 * pos);
-  float disp2 = l0 + l1 + l2;
-  float c = disp2;//1.0 - 0.3 + 0.6 * disp2;
+  // float l0 = 0.66 * cnoise( 0.2 * pos);
+  // float l1 = 0.22 * cnoise( 0.4 * pos);
+  // float l2 = 1.0 * 0.075 * cnoise( 0.8 * pos);
+  // float l3 = 1.0 * 0.055 * cnoise( 1.6 * pos);
+  // float disp2 = l0 + l1 + l2 + l3;
+  // float c = disp2;//1.0 - 0.3 + 0.6 * disp2;
   vec3 color;
-  if (c < 0.2) {
-    color = vec3(0.0, 0.2, 0.8);
+  vec3 sample_pos = pos + vec3(float(seed), float(seed), float(seed));
+  if (is_land(sample_pos)) {
+    color = land_noise(sample_pos);
   } else {
-    color = vec3(0.2, 0.8, 0.2);
+    color = ocean_noise(sample_pos);
   }
+
+  // if (length(pos) > 1.0) {
+  //   color = vec3(1.0, 1.0, 1.0);
+  // }
   // c = c - mod(c, 0.1);
   // vec3 color = vec3(c, c, c);
   // if (c < 0.5) {
@@ -693,7 +741,7 @@ void main(void)
 
 
 
-var renderer = new THREE.WebGLRenderer();
+var renderer = new THREE.WebGLRenderer({ antialias: true});
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
@@ -768,7 +816,27 @@ var sphere_material = new THREE.MeshPhongMaterial({
   normalMap: normalMap,
 });
 
-shader_material = new THREE.ShaderMaterial({uniforms: {}, vertexShader: vertex_shader, fragmentShader: frag_shader2});
+
+
+
+
+function getQueryVariable(variable)
+{
+       var query = window.location.search.substring(1);
+       var vars = query.split("&");
+       for (var i=0;i<vars.length;i++) {
+               var pair = vars[i].split("=");
+               if(pair[0] == variable){return pair[1];}
+       }
+       return(false);
+}
+
+var seed = parseInt(getQueryVariable("seed"));
+
+
+
+
+shader_material = new THREE.ShaderMaterial({uniforms: {seed: {type: "i", value: seed}}, vertexShader: vertex_shader, fragmentShader: frag_shader2});
 
 
 // var sphere_material = new THREE.MeshBasicMaterial( {map: texture} );
