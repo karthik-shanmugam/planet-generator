@@ -783,7 +783,13 @@ var cube = new THREE.Mesh( cube_geometry, cube_material );
 
 var sphere_geometry = new THREE.SphereGeometry( 5, 50, 50 );
 
-
+var clouds = new THREE.SphereGeometry(5.2, 50, 50);
+var cloud_material = new THREE.MeshPhongMaterial({
+  map     : THREE.ImageUtils.loadTexture("img/earthcloudmaptrans.jpg"),
+  transparent : true,
+  opacity : 0.25,
+  // side : THREE.DoubleSide,
+})
 
 
 
@@ -847,13 +853,21 @@ shader_material = new THREE.ShaderMaterial({uniforms: {seed: {type: "i", value: 
 
 // var sphere = new THREE.Mesh( sphere_geometry, sphere_material );
 var sphere = new THREE.Mesh( sphere_geometry, shader_material );
-
+var cloud_mesh = new THREE.Mesh(clouds, cloud_material);
+// var background_geometry = new THREE.SphereGeometry(3, 64, 64);
+// var background_material = new THREE.MeshBasicMaterial({
+//   map : THREE.ImageUtils.loadTexture("img/stars.png"),
+//   side : THREE.BackSide,
+//   depthWrite : false,
+// })
+// var background = new THREE.Mesh(background_geometry, background_material);
 
 
 
 // scene.add( cube );
 scene.add( sphere );
-
+scene.add( cloud_mesh);
+// scene.add ( background);
 
 camera.position.z = 15;
 
@@ -862,8 +876,9 @@ function render() {
     // cube.rotation.x += 0.1;
     // cube.rotation.y += 0.1;
 
-    // sphere.rotation.y += 0.005;
+    sphere.rotation.y += 0.0005;
     // sphere_line.rotation.y += 0.01;
+    cloud_mesh.rotation.y += 0.001;
     renderer.render( scene, camera );
 }
 render();
