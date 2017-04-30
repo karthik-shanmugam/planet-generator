@@ -1,5 +1,30 @@
-var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.0000000001, 1000 );
+function dataLoader()
+{
+    this.data_count = 0;
+    this.data_array = new Array();
+}
+
+function loadFile( file, loader ){
+    var FileObject = new Object();
+    FileObject.data  = "";
+    FileObject.ready = false;
+    FileObject.id    = loader.data_count;
+    loader.data_array[loader.data_count] = false;
+    $.ajax({
+        type: "GET",
+        url: file,
+        dataType: "text",
+        async: false
+    }).done( function( msg ) {
+        FileObject.data = msg;
+        FileObject.ready = true;
+        loader.data_array[FileObject.id] = true;
+    });
+    loader.data_count += 1;
+    return FileObject;
+}
+
+
 
 var vertex_shader = `
 varying vec2 vUv;
@@ -669,7 +694,7 @@ vec3 land_noise(vec3 x){
   float l0 = 0.66 * cnoise( 5.0 * x);
   float l1 = 0.22 * cnoise( 10.0 * x);
   float l2 = 1.0 * 0.075 * cnoise( 20.0 * x);
-  float l3 = 1.0 * 0.055 * cnoise( 40.0 * x);
+  float l3 = 1.0 * 0.055 * cnoise( 400.0 * x);
   float disp2 = l0 + l1 + l2 + l3;
   return (1.0 - 0.8 * disp2) * vec3(0.2, 0.7, 0.2);
 }
@@ -712,12 +737,14 @@ void main(void)
 `
 
 
+var loader = new dataLoader();
+var vertex_shader = loadFile("shaders/planet_vertex.glsl", loader).data;
+var frag_shader2 = loadFile("shaders/planet_frag.glsl", loader).data;
 
 
 
-
-
-
+var scene = new THREE.Scene();
+var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.0000000001, 1000 );
 
 
 
@@ -866,19 +893,21 @@ var cloud_mesh = new THREE.Mesh(clouds, cloud_material);
 
 // scene.add( cube );
 scene.add( sphere );
-scene.add( cloud_mesh);
+// scene.add( cloud_mesh);
 // scene.add ( background);
 
 camera.position.z = 15;
+controls.minDistance = 5.0;
+controls.zoomSpeed = 0.25;
 
 function render() {
     requestAnimationFrame( render );
     // cube.rotation.x += 0.1;
     // cube.rotation.y += 0.1;
 
-    sphere.rotation.y += 0.0005;
+    // sphere.rotation.y += 0.0005;
     // sphere_line.rotation.y += 0.01;
-    cloud_mesh.rotation.y += 0.001;
+    // cloud_mesh.rotation.y += 0.001;
     renderer.render( scene, camera );
 }
 render();
