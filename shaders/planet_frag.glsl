@@ -481,15 +481,31 @@ float is_land(vec3 x){
   return disp2;  
 }
 
+bool is_forest(vec3 x){
+  // move to a new sections of perlin noise space
+  x = x + vec3(0.0, 0.0, 0.0);
+
+  float l0 = 0.66 * snoise( vec4(4.0 * x,  float(seed)));
+  float l1 = 0.22 * snoise( vec4(8.0 * x,  float(seed)));
+  float l2 = 1.0 * 0.075 * snoise( vec4(16.0 * x,  float(seed)));
+  float l3 = 1.0 * 0.055 * snoise( vec4(32.0 * x,  float(seed)));
+  float disp2 = l0 + l1 + l2 + l3;
+  return disp2 > 0.3;  
+}
+
+
+
 vec3 ocean_noise(vec3 x){
   // move to a new sections of perlin noise space
   x = x + vec3(20.0, 0.0, 0.0);
-
+  float dist = length(cameraPosition - worldPos);
   float l0 = 0.66 * snoise( 12.8 * x);
   float l1 = 0.22 * snoise( 25.6 * x);
   float l2 = 1.0 * 0.075 * snoise( 51.2 * x);
   float l3 = 1.0 * 0.055 * snoise( 102.4 * x);
-  float disp2 = l0 + l1 + l2 + l3;
+  float l4 = dist < 0.25   ? 0.055 * snoise( vec4(40000.0 * x, -float(seed))) : 0.0;
+  float l5 = dist < 0.125   ? 0.055 * snoise( vec4(80000.0 * x, -float(seed))) : 0.0;
+  float disp2 = l0 + l1 + l2 + l3 + l4 + l5;
   return (1.0 - 0.1 * disp2) * vec3(0.0, 0.3, 0.8);
 }
 
@@ -539,7 +555,7 @@ vec3 forest_noise(vec3 x){
   float l3 = 1.0 * 0.055 * cnoise( 4000.0 * x);
   float l4 = 1.0 * 0.055 * cnoise( 40000.0 * x);
   float disp2 = l0 + l1 + l2 + l3 + l4;
-  return (1.0 - disp2) * vec3(0.3, 0.6, 0.1);
+  return (1.0 - disp2) * vec3(0.1, 0.5, 0.1);
 }
 
 vec3 taiga_noise(vec3 x){
@@ -749,19 +765,23 @@ void main(void)
     color = ocean_noise(sample_pos);
   } else if (elevation < 0.125) {
     color = coast_noise(sample_pos);
-  } else if (elevation < 0.16) {
-    color = forest_noise(sample_pos);
+  // } else if (elevation < 0.16) {
+  //   color = forest_noise(sample_pos);
   } else if (elevation < 0.5) {
-    color = land_noise(sample_pos);
+    if (is_forest(sample_pos)) {
+      color = forest_noise(sample_pos);
+    } else {
+      color = land_noise(sample_pos);
+    }
   } else {
     color = peak_noise(sample_pos);
   }
 
 
   if (elevation < 0.1) {
-    color = shadePhong(color, lightPos, worldPos, worldNorm, cameraPosition, land_constants);
-  } else {
     color = shadePhong(color, lightPos, worldPos, worldNorm, cameraPosition, ocean_constants);
+  } else {
+    color = shadePhong(color, lightPos, worldPos, worldNorm, cameraPosition, land_constants);
   }
 
   vec3 atmospheric = atmosphereShader(lightPos, worldPos, worldNorm, cameraPosition);
