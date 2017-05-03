@@ -764,15 +764,12 @@ void main(void)
   vec3 lightPos = vec3(0.0, 0.0, 236.0);
   vec3 color;
   vec3 sample_pos = objPos;// + vec3(float(seed), float(seed), float(seed));
-  vec3 land_constants = vec3(0.05, 1.4, 0.05);
-  vec3 ocean_constants = vec3(0.05, 1.2, 1.8);
+
   float elevation = is_land(sample_pos);
   if (elevation < 0.1) {
     color = ocean_noise(sample_pos);
   } else if (elevation < 0.125) {
     color = coast_noise(sample_pos);
-  // } else if (elevation < 0.16) {
-  //   color = forest_noise(sample_pos);
   } else if (elevation < 0.5) {
     if (is_forest(sample_pos)) {
       color = forest_noise(sample_pos);
@@ -782,12 +779,19 @@ void main(void)
   } else {
     color = peak_noise(sample_pos);
   }
-
+  vec3 land_constants = vec3(0.05, 1.4, 0.05);
+  vec3 ocean_constants = vec3(0.05, 1.2, 1.8);
+  vec3 coast_constants = vec3(0.05, 1.3, 0.5);
+  vec3 peak_constants = vec3(0.05, 1.0, 0.9);
 
   if (elevation < 0.1) {
     color = shadePhong(color, lightPos, worldPos, worldNorm, cameraPosition, ocean_constants);
-  } else {
+  } else if (elevation < 0.125) {
+    color = shadePhong(color, lightPos, worldPos, worldNorm, cameraPosition, coast_constants);
+  } else if (elevation < 0.5) {
     color = shadePhong(color, lightPos, worldPos, worldNorm, cameraPosition, land_constants);
+  } else {
+    color = shadePhong(color, lightPos, worldPos, worldNorm, cameraPosition, peak_constants);
   }
 
   vec3 atmospheric = atmosphereShader(lightPos, worldPos, worldNorm, cameraPosition);
