@@ -512,6 +512,7 @@ vec3 ocean_noise(vec3 x){
   float l4 = dist < 0.25   ? 0.55 * snoise( vec4(20000.0 * x, -float(seed))) : 0.0;
   float l5 = dist < 0.125   ? 0.55 * snoise( vec4(40000.0 * x, -float(seed))) : 0.0;
   float disp2 = l0 + l1 + l2 + l3 + l4 + l5;
+
   return (1.0 - 0.1 * disp2) * vec3(0.0, 0.3, 0.8);
 }
 
