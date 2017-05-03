@@ -236,7 +236,7 @@ vec3 land_noise(vec3 x){
   float l3 = 1.0 * 0.055 * cnoise( 4000.0 * x);
   float l4 = 1.0 * 0.055 * cnoise( 40000.0 * x);
   float disp2 = l0 + l1 + l2 + l3 + l4;
-  return (1.0 - 0.8 * disp2) * vec3(0.2, 0.7, 0.2);
+  return (1.0 - disp2) * vec3(0.2, 0.7, 0.2);
 }
 
 vec3 coast_noise(vec3 x){
@@ -249,7 +249,7 @@ vec3 coast_noise(vec3 x){
   float l3 = 1.0 * 0.055 * cnoise( 4000.0 * x);
   float l4 = 1.0 * 0.055 * cnoise( 40000.0 * x);
   float disp2 = l0 + l1 + l2 + l3 + l4;
-  return (1.0 - 0.8 * disp2) * vec3(0.5, 0.5, 0.0);
+  return (1.0 - disp2) * vec3(0.8, 0.8, 0.0);
 }
 
 vec3 forest_noise(vec3 x){
@@ -262,7 +262,7 @@ vec3 forest_noise(vec3 x){
   float l3 = 1.0 * 0.055 * cnoise( 4000.0 * x);
   float l4 = 1.0 * 0.055 * cnoise( 40000.0 * x);
   float disp2 = l0 + l1 + l2 + l3 + l4;
-  return (1.0 - 0.8 * disp2) * vec3(0.3, 0.6, 0.1);
+  return (1.0 - disp2) * vec3(0.3, 0.6, 0.1);
 }
 
 vec3 taiga_noise(vec3 x){
@@ -275,7 +275,7 @@ vec3 taiga_noise(vec3 x){
   float l3 = 1.0 * 0.055 * cnoise( 4000.0 * x);
   float l4 = 1.0 * 0.055 * cnoise( 40000.0 * x);
   float disp2 = l0 + l1 + l2 + l3 + l4;
-  return (1.0 - 0.8 * disp2) * vec3(0.6, 0.6, 0.2);
+  return (1.0 - disp2) * vec3(0.6, 0.6, 0.2);
 }
 
 vec3 mountain_noise(vec3 x){
@@ -288,10 +288,10 @@ vec3 mountain_noise(vec3 x){
   float l3 = 1.0 * 0.055 * cnoise( 4000.0 * x);
   float l4 = 1.0 * 0.055 * cnoise( 40000.0 * x);
   float disp2 = l0 + l1 + l2 + l3 + l4;
-  return (1.0 - 0.8 * disp2) * vec3(0.6, 0.6, 0.7);
+  return (1.0 - disp2) * vec3(0.5, 0.5, 0.6);
 }
 
-vec3 ice_noise(vec3 x){
+vec3 mountain2_noise(vec3 x){
   // move to a new sections of perlin noise space
   x = x + vec3(0.0, 7.0, 7.0);
 
@@ -301,7 +301,33 @@ vec3 ice_noise(vec3 x){
   float l3 = 1.0 * 0.055 * cnoise( 4000.0 * x);
   float l4 = 1.0 * 0.055 * cnoise( 40000.0 * x);
   float disp2 = l0 + l1 + l2 + l3 + l4;
-  return (1.0 - 0.8 * disp2) * vec3(0.8, 0.8, 0.9);
+  return (1.0 - disp2) * vec3(0.8, 0.8, 0.9);
+}
+
+vec3 mountain3_noise(vec3 x){
+  // move to a new sections of perlin noise space
+  x = x + vec3(3.0, 5.0, 4.0);
+
+  float l0 = 0.66 * cnoise( 5.0 * x);
+  float l1 = 0.22 * cnoise( 10.0 * x);
+  float l2 = 1.0 * 0.075 * cnoise( 20.0 * x);
+  float l3 = 1.0 * 0.055 * cnoise( 4000.0 * x);
+  float l4 = 1.0 * 0.055 * cnoise( 40000.0 * x);
+  float disp2 = l0 + l1 + l2 + l3 + l4;
+  return (1.0 - disp2) * vec3(0.9, 0.9, 1.0);
+}
+
+vec3 peak_noise(vec3 x){
+  // move to a new sections of perlin noise space
+  x = x + vec3(7.0, 7.0, 7.0);
+
+  float l0 = 0.66 * cnoise( 5.0 * x);
+  float l1 = 0.22 * cnoise( 10.0 * x);
+  float l2 = 1.0 * 0.075 * cnoise( 20.0 * x);
+  float l3 = 1.0 * 0.055 * cnoise( 4000.0 * x);
+  float l4 = 1.0 * 0.055 * cnoise( 40000.0 * x);
+  float disp2 = l0 + l1 + l2 + l3 + l4;
+  return (1.0 - disp2) * vec3(1.0, 1.0, 1.0);
 }
 
 // vec3 ss_land_noise(vec x, int n) {
@@ -379,25 +405,23 @@ void main(void)
   float elevation = is_land(sample_pos);
   if (elevation < 0.1) {
     color = ocean_noise(sample_pos);
-  } else if (elevation < 0.15) {
+  } else if (elevation < 0.125) {
     color = coast_noise(sample_pos);
-  } else if (elevation < 0.20) {
+  } else if (elevation < 0.16) {
     color = forest_noise(sample_pos);
-  } else if (elevation < 0.25) {
+  } else if (elevation < 0.5) {
     color = land_noise(sample_pos);
-  } else if (elevation < 0.30){
-    color = taiga_noise(sample_pos);
-  } else if (elevation < 0.375) {
-    color = mountain_noise(sample_pos);
   } else {
-    color = ice_noise(sample_pos);
+    color = peak_noise(sample_pos);
   }
 
   if (elevation < 0.1) {
-    color = shadePhong(color, lightPos, worldPos, norm, cameraPosition, land_constants);
-  } else {
     color = shadePhong(color, lightPos, worldPos, norm, cameraPosition, ocean_constants);
+  } else {
+    color = shadePhong(color, lightPos, worldPos, norm, cameraPosition, land_constants);
   }
+
+
 
   vec3 atmospheric = atmosphereShader(lightPos, worldPos, norm, cameraPosition);
   float dist = length(cameraPosition - worldPos);
