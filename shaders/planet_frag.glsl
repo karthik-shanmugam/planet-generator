@@ -1,7 +1,8 @@
 uniform int seed;
 varying vec2 vUv;
 varying float disp;
-varying vec3 pos;
+varying vec3 worldPos;
+varying vec3 objPos;
 varying vec3 norm;
 
 
@@ -310,7 +311,7 @@ vec3 atmosphereShader(vec3 lightPos, vec3 vertex, vec3 normal, vec3 eyePos)
   dProd += invertedViewAngle * 0.5 * (max(-0.35, dot(normal, light)) + 0.35);
   dProd *= 0.7 + pow(invertedViewAngle/(PI/2.0), 2.0);
   
-  dProd *= 0.5;
+  dProd *= 0.6;
   return min(vec3(dProd, dProd, dProd), 0.8);//vec4 atmColor = vec4(dProd, dProd, dProd, 1.0);
   
   // vec4 texelColor = texture2D(map, vUv) * min(asin(lightAngle), 1.0);
@@ -331,7 +332,7 @@ void main(void)
   // float c = disp2;//1.0 - 0.3 + 0.6 * disp2;
   vec3 lightPos = vec3(0.0, 0.0, 236.0);
   vec3 color;
-  vec3 sample_pos = pos + vec3(float(seed), float(seed), float(seed));
+  vec3 sample_pos = objPos + vec3(float(seed), float(seed), float(seed));
   vec3 land_constants = vec3(0.05, 1.4, 0.1);
   vec3 ocean_constants = vec3(0.05, 1.2, 0.8);
   bool curr_is_land = is_land(sample_pos);
@@ -343,13 +344,13 @@ void main(void)
 
 
   if (curr_is_land) {
-    color = shadePhong(color, lightPos, pos, norm, cameraPosition, land_constants);
+    color = shadePhong(color, lightPos, worldPos, norm, cameraPosition, land_constants);
   } else {
-    color = shadePhong(color, lightPos, pos, norm, cameraPosition, ocean_constants);
+    color = shadePhong(color, lightPos, worldPos, norm, cameraPosition, ocean_constants);
   }
 
-  vec3 atmospheric = atmosphereShader(lightPos, pos, norm, cameraPosition);
-  float dist = length(cameraPosition - pos);
+  vec3 atmospheric = atmosphereShader(lightPos, worldPos, norm, cameraPosition);
+  float dist = length(cameraPosition - worldPos);
   float atmosphericStrength = 0.0;
   if (dist < 0.5) {
     atmosphericStrength = 0.0;
@@ -358,7 +359,7 @@ void main(void)
   } else {
     atmosphericStrength = 1.0;
   }
-  color += atmosphereShader(lightPos, pos, norm, cameraPosition) * atmosphericStrength;
+  color += atmosphereShader(lightPos, worldPos, norm, cameraPosition) * atmosphericStrength;
 
   
 
