@@ -348,8 +348,17 @@ void main(void)
     color = shadePhong(color, lightPos, pos, norm, cameraPosition, ocean_constants);
   }
 
-
-  color += atmosphereShader(lightPos, pos, norm, cameraPosition) / max(1.0, 3.0 - length(cameraPosition - pos));
+  vec3 atmospheric = atmosphereShader(lightPos, pos, norm, cameraPosition);
+  float dist = length(cameraPosition - pos);
+  float atmosphericStrength = 0.0;
+  if (dist < 0.5) {
+    atmosphericStrength = 0.0;
+  } else if (dist < 2.0) {
+    atmosphericStrength = (dist - 0.5) / (2.0 - 0.5);
+  } else {
+    atmosphericStrength = 1.0;
+  }
+  color += atmosphereShader(lightPos, pos, norm, cameraPosition) * atmosphericStrength;
 
   
 
