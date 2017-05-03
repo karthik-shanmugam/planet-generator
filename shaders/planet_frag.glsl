@@ -493,6 +493,12 @@ bool is_forest(vec3 x){
   return disp2 > 0.3;  
 }
 
+bool is_house(vec3 x){
+  float dist = length(cameraPosition) - 1.0;
+  if (dist > 0.08) {return false;}
+  float y = snoise(vec4(1000.0 * x, float(seed)));
+  return y > 0.9;
+}
 
 
 vec3 ocean_noise(vec3 x){
@@ -521,7 +527,7 @@ vec3 land_noise(vec3 x){
   float l5 = dist < 0.125   ? 0.055 * snoise( vec4(80000.0 * x, -float(seed))) : 0.0;
 
   float disp2 = l0 + l1 + l2 + l3 + l4 + l5;
-  return (1.0 - 0.8 * disp2) * vec3(0.2, 0.7, 0.2);
+  return (1.0 - 0.8 * disp2) * (!is_house(x)?vec3(0.2, 0.7, 0.2):vec3(0.2, 0.1, 0.0));
 
 //   float l0 = 0.66 * cnoise( 5.0 * x);
 //   float l1 = 0.22 * cnoise( 10.0 * x);
@@ -759,7 +765,7 @@ void main(void)
   vec3 color;
   vec3 sample_pos = objPos;// + vec3(float(seed), float(seed), float(seed));
   vec3 land_constants = vec3(0.05, 1.4, 0.05);
-  vec3 ocean_constants = vec3(0.05, 1.2, 0.8);
+  vec3 ocean_constants = vec3(0.05, 1.2, 1.8);
   float elevation = is_land(sample_pos);
   if (elevation < 0.1) {
     color = ocean_noise(sample_pos);
