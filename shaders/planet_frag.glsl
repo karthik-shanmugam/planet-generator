@@ -2,9 +2,10 @@ uniform int seed;
 varying vec2 vUv;
 varying float disp;
 varying vec3 pos;
+varying vec3 norm;
 
 
-
+// uniform vec3 cameraPosition;
 
 
 
@@ -256,7 +257,8 @@ vec3 land_noise(vec3 x){
   float l1 = 0.22 * cnoise( 10.0 * x);
   float l2 = 1.0 * 0.075 * cnoise( 20.0 * x);
   float l3 = 1.0 * 0.055 * cnoise( 4000.0 * x);
-  float disp2 = l0 + l1 + l2 + l3;
+  float l4 = 1.0 * 0.055 * cnoise( 40000.0 * x);
+  float disp2 = l0 + l1 + l2 + l3 + l4;
   return (1.0 - 0.8 * disp2) * vec3(0.2, 0.7, 0.2);
 }
 
@@ -264,6 +266,60 @@ vec3 land_noise(vec3 x){
 //   vec3 tot;
 //   for (int i = 0; i < n; i++)
 // }
+
+vec3 shadePhong(vec3 color, vec3 lightPos, vec3 vertex, vec3 normal, vec3 eyePos, vec3 phongConstants)
+{
+    // TODO Part 7.
+    // TODO Compute Phong shading here. You can choose any color you like. But make
+    // TODO sure that you have noticeable specular highlights in the shading.
+    // TODO Variables to use: eyePos, lightPos, normal, vertex
+
+    vec3 l = normalize(lightPos - vertex);
+    vec3 v = normalize(eyePos - vertex);
+    vec3 h = (v+l)/length(v+l);
+    vec3 n = normalize(normal);
+    float r = length(lightPos-vertex);
+    float ka = phongConstants.x;//0.3;
+    float Ia = 1.0;
+    float kd = phongConstants.y;//1.8;
+    float ks = phongConstants.z;//0.1;
+    float p = 100.0;
+    float I = 500000000.0;
+    return color * (ka*Ia + kd*(I/(r*r))*max(0.0, dot(n, l)) + ks*(I/(r*r))*pow(max(0.0, dot(n, h)), p));
+}
+
+
+vec3 atmosphereShader(vec3 lightPos, vec3 vertex, vec3 normal, vec3 eyePos)
+{
+  float PI = 3.14159265358979323846264;
+  vec3 light = lightPos - vertex;
+  vec3 cameraDir = normalize(eyePos - vertex);
+  
+  light = normalize(light);
+  
+  float lightAngle = max(0.0, dot(normal, light));
+  // lightAngle = 1.0;
+  float viewAngle = max(0.0, dot(normal, cameraDir));
+  float adjustedLightAngle = min(0.6, lightAngle) / 0.6;
+  float adjustedViewAngle = min(0.65, viewAngle) / 0.65;
+  float invertedViewAngle = pow(acos(viewAngle), 3.0) * 0.4;
+  
+  float dProd = 0.0;
+  dProd += 0.5 * lightAngle;
+  dProd += 0.2 * lightAngle * (invertedViewAngle - 0.1);
+  dProd += invertedViewAngle * 0.5 * (max(-0.35, dot(normal, light)) + 0.35);
+  dProd *= 0.7 + pow(invertedViewAngle/(PI/2.0), 2.0);
+  
+  dProd *= 0.5;
+  return min(vec3(dProd, dProd, dProd), 0.8);//vec4 atmColor = vec4(dProd, dProd, dProd, 1.0);
+  
+  // vec4 texelColor = texture2D(map, vUv) * min(asin(lightAngle), 1.0);
+  // gl_FragColor = texelColor + min(atmColor, 0.8);
+}
+
+
+
+
 
 void main(void)
 {
@@ -273,13 +329,31 @@ void main(void)
   // float l3 = 1.0 * 0.055 * cnoise( 1.6 * pos);
   // float disp2 = l0 + l1 + l2 + l3;
   // float c = disp2;//1.0 - 0.3 + 0.6 * disp2;
+  vec3 lightPos = vec3(0.0, 0.0, 23670.0);
   vec3 color;
   vec3 sample_pos = pos + vec3(float(seed), float(seed), float(seed));
-  if (is_land(sample_pos)) {
+  vec3 land_constants = vec3(0.05, 1.4, 0.1);
+  vec3 ocean_constants = vec3(0.05, 1.2, 0.8);
+  bool curr_is_land = is_land(sample_pos);
+  if (curr_is_land) {
     color = land_noise(sample_pos);
   } else {
     color = ocean_noise(sample_pos);
   }
+
+
+  if (curr_is_land) {
+    color = shadePhong(color, lightPos, pos, norm, cameraPosition, land_constants);
+  } else {
+    color = shadePhong(color, lightPos, pos, norm, cameraPosition, ocean_constants);
+  }
+
+
+  color += atmosphereShader(lightPos, pos, norm, cameraPosition) / max(1.0, 3.0 - length(cameraPosition - pos));
+
+  
+
+  // color /= length(cameraPosition - pos);
 
   // if (length(pos) > 1.0) {
   //   color = vec3(1.0, 1.0, 1.0);
