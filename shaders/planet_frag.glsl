@@ -284,7 +284,7 @@ vec3 shadePhong(vec3 color, vec3 lightPos, vec3 vertex, vec3 normal, vec3 eyePos
     float kd = phongConstants.y;//1.8;
     float ks = phongConstants.z;//0.1;
     float p = 100.0;
-    float I = 500000000.0;
+    float I = 50000.0;
     return color * (ka*Ia + kd*(I/(r*r))*max(0.0, dot(n, l)) + ks*(I/(r*r))*pow(max(0.0, dot(n, h)), p));
 }
 
@@ -329,7 +329,7 @@ void main(void)
   // float l3 = 1.0 * 0.055 * cnoise( 1.6 * pos);
   // float disp2 = l0 + l1 + l2 + l3;
   // float c = disp2;//1.0 - 0.3 + 0.6 * disp2;
-  vec3 lightPos = vec3(0.0, 0.0, 23670.0);
+  vec3 lightPos = vec3(0.0, 0.0, 236.0);
   vec3 color;
   vec3 sample_pos = pos + vec3(float(seed), float(seed), float(seed));
   vec3 land_constants = vec3(0.05, 1.4, 0.1);
