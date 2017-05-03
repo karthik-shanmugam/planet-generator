@@ -106,7 +106,7 @@ controls.zoomSpeed = 0.25;
 
 function render() {
     requestAnimationFrame( render );
-    sphere.rotation.y += 0.0005;
+    // sphere.rotation.y += 0.0005;
     cloud_mesh.rotation.y += 0.001;
     renderer.render( scene, camera );
 }

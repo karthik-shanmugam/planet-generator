@@ -2,7 +2,8 @@ varying vec2 vUv;
 varying float disp;
 varying vec3 objPos;
 varying vec3 worldPos;
-varying vec3 norm;
+varying vec3 objNorm;
+varying vec3 worldNorm;
 
 
 
@@ -223,6 +224,7 @@ void main() {
   vec3 newPosition = position + normal * disp;
   worldPos = (modelMatrix * vec4(position, 1.0)).xyz;// / length(position - vec3(0.0, 0.0, 0.0));
   objPos = position;
-  norm = (modelMatrix * vec4(normal, 1.0)).xyz;
+  worldNorm = (modelMatrix * vec4(normal, 1.0)).xyz;
+  objNorm = normal;
   gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition,1.0);
 }
