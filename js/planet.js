@@ -74,6 +74,11 @@ function getQueryVariable(variable)
 }
 
 var seed = parseInt(getQueryVariable("seed"));
+rotation = getQueryVariable("rotation");
+shouldRotate = true;
+if (rotation == "false") {
+  shouldRotate = false;
+}
 
 
 shader_material = new THREE.ShaderMaterial({uniforms: {seed: {type: "i", value: seed}}, vertexShader: vertex_shader, fragmentShader: frag_shader2});
@@ -106,7 +111,7 @@ controls.zoomSpeed = 0.25;
 
 function render() {
     requestAnimationFrame( render );
-    sphere.rotation.y += 0.001;
+    if (shouldRotate) {sphere.rotation.y += 0.001;}
     cloud_mesh.rotation.y += 0.0001;
     renderer.render( scene, camera );
 }
