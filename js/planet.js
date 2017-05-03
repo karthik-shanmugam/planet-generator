@@ -84,7 +84,7 @@ var clouds = new THREE.SphereGeometry(1.01, 50, 50);
 var cloud_material = new THREE.MeshPhongMaterial({
   map     : THREE.ImageUtils.loadTexture("img/earthcloudmaptrans.jpg"),
   transparent : true,
-  opacity : 0.05,
+  opacity : 0.1,
 })
 
 var sphere = new THREE.Mesh( sphere_geometry, shader_material );
@@ -96,8 +96,8 @@ var background_material = new THREE.MeshBasicMaterial({
   depthWrite : false,
 })
 var background = new THREE.Mesh(background_geometry, background_material);
-// scene.add( cloud_mesh);
 scene.add ( background);
+scene.add( cloud_mesh);
 renderer.sortObjects = false;
 scene.add( sphere );
 camera.position.z = 3;
@@ -106,8 +106,8 @@ controls.zoomSpeed = 0.25;
 
 function render() {
     requestAnimationFrame( render );
-    // sphere.rotation.y += 0.0005;
-    cloud_mesh.rotation.y += 0.001;
+    sphere.rotation.y += 0.001;
+    cloud_mesh.rotation.y += 0.0001;
     renderer.render( scene, camera );
 }
 render();

@@ -464,11 +464,12 @@ float snoise(vec4 v)
 
 
 
+
 // float rand(vec3 co){
 //   return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
 // }
 
-bool is_land(vec3 x){
+float is_land(vec3 x){
   // move to a new sections of perlin noise space
   x = x + vec3(10.0, 0.0, 0.0);
 
@@ -477,7 +478,7 @@ bool is_land(vec3 x){
   float l2 = 1.0 * 0.075 * snoise( vec4(4.0 * x,  float(seed)));
   float l3 = 1.0 * 0.055 * snoise( vec4(8.0 * x,  float(seed)));
   float disp2 = l0 + l1 + l2 + l3;
-  return disp2 > 0.10;  
+  return disp2;  
 }
 
 vec3 ocean_noise(vec3 x){
@@ -505,6 +506,105 @@ vec3 land_noise(vec3 x){
 
   float disp2 = l0 + l1 + l2 + l3 + l4 + l5;
   return (1.0 - 0.8 * disp2) * vec3(0.2, 0.7, 0.2);
+
+//   float l0 = 0.66 * cnoise( 5.0 * x);
+//   float l1 = 0.22 * cnoise( 10.0 * x);
+//   float l2 = 1.0 * 0.075 * cnoise( 20.0 * x);
+//   float l3 = 1.0 * 0.055 * cnoise( 4000.0 * x);
+//   float l4 = 1.0 * 0.055 * cnoise( 40000.0 * x);
+//   float disp2 = l0 + l1 + l2 + l3 + l4;
+//   return (1.0 - disp2) * vec3(0.2, 0.7, 0.2);
+}
+
+vec3 coast_noise(vec3 x){
+  // move to a new sections of perlin noise space
+  x = x + vec3(50.0, 0.0, 0.0);
+
+  float l0 = 0.66 * cnoise( 5.0 * x);
+  float l1 = 0.22 * cnoise( 10.0 * x);
+  float l2 = 1.0 * 0.075 * cnoise( 20.0 * x);
+  float l3 = 1.0 * 0.055 * cnoise( 4000.0 * x);
+  float l4 = 1.0 * 0.055 * cnoise( 40000.0 * x);
+  float disp2 = l0 + l1 + l2 + l3 + l4;
+  return (1.0 - disp2) * vec3(0.8, 0.8, 0.0);
+}
+
+vec3 forest_noise(vec3 x){
+  // move to a new sections of perlin noise space
+  x = x + vec3(100.0, 100.0, 0.0);
+
+  float l0 = 0.66 * cnoise( 5.0 * x);
+  float l1 = 0.22 * cnoise( 10.0 * x);
+  float l2 = 1.0 * 0.075 * cnoise( 20.0 * x);
+  float l3 = 1.0 * 0.055 * cnoise( 4000.0 * x);
+  float l4 = 1.0 * 0.055 * cnoise( 40000.0 * x);
+  float disp2 = l0 + l1 + l2 + l3 + l4;
+  return (1.0 - disp2) * vec3(0.3, 0.6, 0.1);
+}
+
+vec3 taiga_noise(vec3 x){
+  // move to a new sections of perlin noise space
+  x = x + vec3(50.0, 50.0, 0.0);
+
+  float l0 = 0.66 * cnoise( 5.0 * x);
+  float l1 = 0.22 * cnoise( 10.0 * x);
+  float l2 = 1.0 * 0.075 * cnoise( 20.0 * x);
+  float l3 = 1.0 * 0.055 * cnoise( 4000.0 * x);
+  float l4 = 1.0 * 0.055 * cnoise( 40000.0 * x);
+  float disp2 = l0 + l1 + l2 + l3 + l4;
+  return (1.0 - disp2) * vec3(0.6, 0.6, 0.2);
+}
+
+vec3 mountain_noise(vec3 x){
+  // move to a new sections of perlin noise space
+  x = x + vec3(0.0, 50.0, 50.0);
+
+  float l0 = 0.66 * cnoise( 5.0 * x);
+  float l1 = 0.22 * cnoise( 10.0 * x);
+  float l2 = 1.0 * 0.075 * cnoise( 20.0 * x);
+  float l3 = 1.0 * 0.055 * cnoise( 4000.0 * x);
+  float l4 = 1.0 * 0.055 * cnoise( 40000.0 * x);
+  float disp2 = l0 + l1 + l2 + l3 + l4;
+  return (1.0 - disp2) * vec3(0.5, 0.5, 0.6);
+}
+
+vec3 mountain2_noise(vec3 x){
+  // move to a new sections of perlin noise space
+  x = x + vec3(0.0, 7.0, 7.0);
+
+  float l0 = 0.66 * cnoise( 5.0 * x);
+  float l1 = 0.22 * cnoise( 10.0 * x);
+  float l2 = 1.0 * 0.075 * cnoise( 20.0 * x);
+  float l3 = 1.0 * 0.055 * cnoise( 4000.0 * x);
+  float l4 = 1.0 * 0.055 * cnoise( 40000.0 * x);
+  float disp2 = l0 + l1 + l2 + l3 + l4;
+  return (1.0 - disp2) * vec3(0.8, 0.8, 0.9);
+}
+
+vec3 mountain3_noise(vec3 x){
+  // move to a new sections of perlin noise space
+  x = x + vec3(3.0, 5.0, 4.0);
+
+  float l0 = 0.66 * cnoise( 5.0 * x);
+  float l1 = 0.22 * cnoise( 10.0 * x);
+  float l2 = 1.0 * 0.075 * cnoise( 20.0 * x);
+  float l3 = 1.0 * 0.055 * cnoise( 4000.0 * x);
+  float l4 = 1.0 * 0.055 * cnoise( 40000.0 * x);
+  float disp2 = l0 + l1 + l2 + l3 + l4;
+  return (1.0 - disp2) * vec3(0.9, 0.9, 1.0);
+}
+
+vec3 peak_noise(vec3 x){
+  // move to a new sections of perlin noise space
+  x = x + vec3(7.0, 7.0, 7.0);
+
+  float l0 = 0.66 * cnoise( 5.0 * x);
+  float l1 = 0.22 * cnoise( 10.0 * x);
+  float l2 = 1.0 * 0.075 * cnoise( 20.0 * x);
+  float l3 = 1.0 * 0.055 * cnoise( 4000.0 * x);
+  float l4 = 1.0 * 0.055 * cnoise( 40000.0 * x);
+  float disp2 = l0 + l1 + l2 + l3 + l4;
+  return (1.0 - disp2) * vec3(1.0, 1.0, 1.0);
 }
 
 
@@ -644,21 +744,28 @@ void main(void)
   vec3 sample_pos = objPos;// + vec3(float(seed), float(seed), float(seed));
   vec3 land_constants = vec3(0.05, 1.4, 0.05);
   vec3 ocean_constants = vec3(0.05, 1.2, 0.8);
-  bool curr_is_land = is_land(sample_pos);
-  if (curr_is_land) {
+  float elevation = is_land(sample_pos);
+  if (elevation < 0.1) {
+    color = ocean_noise(sample_pos);
+  } else if (elevation < 0.125) {
+    color = coast_noise(sample_pos);
+  } else if (elevation < 0.16) {
+    color = forest_noise(sample_pos);
+  } else if (elevation < 0.5) {
     color = land_noise(sample_pos);
   } else {
-    color = ocean_noise(sample_pos);
+    color = peak_noise(sample_pos);
   }
 
 
-  if (curr_is_land) {
+  if (elevation < 0.1) {
     color = shadePhong(color, lightPos, worldPos, worldNorm, cameraPosition, land_constants);
   } else {
     color = shadePhong(color, lightPos, worldPos, worldNorm, cameraPosition, ocean_constants);
   }
 
   vec3 atmospheric = atmosphereShader(lightPos, worldPos, worldNorm, cameraPosition);
+
   float dist = length(cameraPosition - worldPos);
   float atmosphericStrength = 0.0;
   if (dist < 0.5) {
