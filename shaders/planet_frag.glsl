@@ -395,7 +395,6 @@ bool is_house(vec3 x){
   return y > 0.9;
 }
 
-
 vec3 ocean_noise(vec3 x){
   // move to a new sections of perlin noise space
   x = x + vec3(20.0, 0.0, 0.0);
