@@ -388,6 +388,12 @@ bool is_forest(vec3 x){
   return disp2 > 0.3;  
 }
 
+bool is_house(vec3 x){
+  float dist = length(cameraPosition) - 1.0;
+  if (dist > 0.08) {return false;}
+  float y = snoise(vec4(1000.0 * x, float(seed)));
+  return y > 0.9;
+}
 
 
 vec3 ocean_noise(vec3 x){
@@ -398,9 +404,10 @@ vec3 ocean_noise(vec3 x){
   float l1 = 0.22 * snoise( 25.6 * x);
   float l2 = 1.0 * 0.075 * snoise( 51.2 * x);
   float l3 = 1.0 * 0.055 * snoise( 102.4 * x);
-  float l4 = dist < 0.25   ? 0.055 * snoise( vec4(40000.0 * x, -float(seed))) : 0.0;
-  float l5 = dist < 0.125   ? 0.055 * snoise( vec4(80000.0 * x, -float(seed))) : 0.0;
+  float l4 = dist < 0.25   ? 0.55 * snoise( vec4(20000.0 * x, -float(seed))) : 0.0;
+  float l5 = dist < 0.125   ? 0.55 * snoise( vec4(40000.0 * x, -float(seed))) : 0.0;
   float disp2 = l0 + l1 + l2 + l3 + l4 + l5;
+
   return (1.0 - 0.1 * disp2) * vec3(0.0, 0.3, 0.8);
 }
 
@@ -442,7 +449,7 @@ vec3 forest_noise(vec3 x){
   float l3 = 1.0 * 0.055 * cnoise( 4000.0 * x);
   float l4 = 1.0 * 0.055 * cnoise( 40000.0 * x);
   float disp2 = l0 + l1 + l2 + l3 + l4;
-  return (1.0 - disp2) * vec3(0.1, 0.5, 0.1);
+  return (1.0 - disp2) * (!is_house(x)?vec3(0.1, 0.5, 0.1):vec3(0.2, 0.1, 0.0));
 }
 
 vec3 taiga_noise(vec3 x){
@@ -623,7 +630,7 @@ void main(void)
     color = peak_noise(sample_pos);
   }
   vec3 land_constants = vec3(0.05, 1.4, 0.05);
-  vec3 ocean_constants = vec3(0.05, 1.2, 0.8);
+  vec3 ocean_constants = vec3(0.05, 1.2, 1.8);
   vec3 coast_constants = vec3(0.05, 1.3, 0.5);
   vec3 peak_constants = vec3(0.05, 1.0, 0.9);
 
