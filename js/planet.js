@@ -45,14 +45,6 @@ window.addEventListener('resize', function() {
 
 controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-
-// var light = new THREE.PointLight(0x707070, 5);
-// light.position.set(-100,200,100);
-// scene.add(light);
-
-// var light = new THREE.AmbientLight( 0x404040 ); // soft white light
-// scene.add( light );
-
 var axisHelper = new THREE.AxisHelper( 50 );
 scene.add( axisHelper );
 

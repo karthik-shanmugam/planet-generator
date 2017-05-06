@@ -9,17 +9,6 @@ varying vec3 worldNorm;
 
 // uniform vec3 cameraPosition;
 
-
-
-
-
-
-
-
-
-
-
-
 //
 // GLSL textureless classic 3D noise "cnoise",
 // with an RSL-style periodic variant "pnoise".
@@ -57,11 +46,6 @@ vec4 taylorInvSqrt(vec4 r)
 vec3 fade(vec3 t) {
   return t*t*t*(t*(t*6.0-15.0)+10.0);
 }
-
-
-
-
-
 
 
 float snoise(vec3 v)
@@ -138,13 +122,6 @@ float snoise(vec3 v)
   return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1), 
                                 dot(p2,x2), dot(p3,x3) ) );
   }
-
-
-
-
-
-
-
 
 // Classic Perlin noise
 float cnoise(vec3 P)
@@ -287,40 +264,12 @@ float pnoise(vec3 P, vec3 rep)
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// vec4 mod289(vec4 x) {
-//   return x - floor(x * (1.0 / 289.0)) * 289.0; }
-
 float mod289(float x) {
   return x - floor(x * (1.0 / 289.0)) * 289.0; }
-
-// vec4 permute(vec4 x) {
-//      return mod289(((x*34.0)+1.0)*x);
-// }
 
 float permute(float x) {
      return mod289(((x*34.0)+1.0)*x);
 }
-
-// vec4 taylorInvSqrt(vec4 r)
-// {
-//   return 1.79284291400159 - 0.85373472095314 * r;
-// }
 
 float taylorInvSqrt(float r)
 {
@@ -340,7 +289,6 @@ vec4 grad4(float j, vec4 ip)
   return p;
   }
             
-// (sqrt(5) - 1)/4 = F4, used once below
 #define F4 0.309016994374947451
 
 float snoise(vec4 v)
@@ -374,11 +322,6 @@ float snoise(vec4 v)
   vec4 i2 = clamp( i0-1.0, 0.0, 1.0 );
   vec4 i1 = clamp( i0-2.0, 0.0, 1.0 );
 
-  //  x0 = x0 - 0.0 + 0.0 * C.xxxx
-  //  x1 = x0 - i1  + 1.0 * C.xxxx
-  //  x2 = x0 - i2  + 2.0 * C.xxxx
-  //  x3 = x0 - i3  + 3.0 * C.xxxx
-  //  x4 = x0 - 1.0 + 4.0 * C.xxxx
   vec4 x1 = x0 - i1 + C.xxxx;
   vec4 x2 = x0 - i2 + C.yyyy;
   vec4 x3 = x0 - i3 + C.zzzz;
@@ -420,54 +363,6 @@ float snoise(vec4 v)
                + dot(m1*m1, vec2( dot( p3, x3 ), dot( p4, x4 ) ) ) ) ;
 
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// float rand(vec3 co){
-//   return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
-// }
 
 float is_land(vec3 x){
   // move to a new sections of perlin noise space
@@ -522,14 +417,6 @@ vec3 land_noise(vec3 x){
 
   float disp2 = l0 + l1 + l2 + l3 + l4 + l5;
   return (1.0 - 0.8 * disp2) * vec3(0.2, 0.7, 0.2);
-
-//   float l0 = 0.66 * cnoise( 5.0 * x);
-//   float l1 = 0.22 * cnoise( 10.0 * x);
-//   float l2 = 1.0 * 0.075 * cnoise( 20.0 * x);
-//   float l3 = 1.0 * 0.055 * cnoise( 4000.0 * x);
-//   float l4 = 1.0 * 0.055 * cnoise( 40000.0 * x);
-//   float disp2 = l0 + l1 + l2 + l3 + l4;
-//   return (1.0 - disp2) * vec3(0.2, 0.7, 0.2);
 }
 
 vec3 coast_noise(vec3 x){
@@ -623,7 +510,6 @@ vec3 peak_noise(vec3 x){
   return (1.0 - disp2) * vec3(1.0, 1.0, 1.0);
 }
 
-
 mat4 rotationMatrix(vec3 axis, float angle)
 {
     axis = normalize(axis);
@@ -659,16 +545,6 @@ vec3 to_sample(vec3 x, vec3 normal, float delta)
   return compute_normal(cur1, cur2, cur3);
   
 }
-
-
-
-
-
-
-// vec3 ss_land_noise(vec x, int n) {
-//   vec3 tot;
-//   for (int i = 0; i < n; i++)
-// }
 
 vec3 shadePhong(vec3 color, vec3 lightPos, vec3 vertex, vec3 normal, vec3 eyePos, vec3 phongConstants)
 {
@@ -719,33 +595,6 @@ vec3 atmosphereShader(vec3 lightPos, vec3 vertex, vec3 normal, vec3 eyePos)
   // vec4 texelColor = texture2D(map, vUv) * min(asin(lightAngle), 1.0);
   // gl_FragColor = texelColor + min(atmColor, 0.8);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 void main(void)
 {
@@ -800,21 +649,5 @@ void main(void)
     atmosphericStrength = 1.0;
   }
   color += atmosphereShader(lightPos, worldPos, worldNorm, cameraPosition) * atmosphericStrength;
-
-  
-
-  // color /= length(cameraPosition - pos);
-
-  // if (length(pos) > 1.0) {
-  //   color = vec3(1.0, 1.0, 1.0);
-  // }
-  // c = c - mod(c, 0.1);
-  // vec3 color = vec3(c, c, c);
-  // if (c < 0.5) {
-  //   color = vec3(0.0, 0.0, 0.0);
-  // } else {
-  //   color = vec3(1.0, 1.0, 1.0);
-  // }
-  // vec3 color = vec3(1.0, 1.0, 1.0) * (1.0 - 0.3 + 0.6 * disp2);
   gl_FragColor = vec4(color, 1.0);//vec4(rand(col), rand(col + vec3(1.0, 1.0, 1.0)), rand(col + vec3(2.0, 2.0, 2.0)), 1.0);
 }

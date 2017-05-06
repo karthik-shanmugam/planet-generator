@@ -188,38 +188,8 @@ float pnoise(vec3 P, vec3 rep)
   return 2.2 * n_xyz;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void main() {
   vUv = uv;
-  // float l0 = 0.4 * cnoise( 1.0 * position);
-  // float l1 = 0.2 * cnoise( 2.0 * position);
-  // float l2 = 0.1 * cnoise( 4.0 * position);
-  // disp = l0 + l1 + l2;
   disp = 0.0;
   vec3 newPosition = position + normal * disp;
   worldPos = (modelMatrix * vec4(position, 1.0)).xyz;// / length(position - vec3(0.0, 0.0, 0.0));
